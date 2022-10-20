@@ -11,11 +11,12 @@ class TaskURLTests(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.post = Post.objects.create(
-            author=User.objects.create_user(username='test_name',
-                                            email='test@ya.ru',
-                                            password='pass',
-                                            text='Тестовая запись',
-                                    )
+            author=User.objects.create_user(
+                username='test_name',
+                email='test@ya.ru',
+                password='pass',
+                text='Тестовая запись',
+                )
         )
         cls.group = Group.objects.create(
             title=('Название тестовой группы'),
