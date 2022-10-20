@@ -32,12 +32,12 @@ class TestExample(unittest.TestCase):
         """Вызывается после каждого теста."""
         print('>>> tearDown')
 
-    def test_one(self): # это -- test case 
+    def test_one(self):
         print('>>>> test_simple')
 
-    def test_one_more(self): # это -- ещё один test case
+    def test_one_more(self):
         print('>>>> test_simple')
 
 
 if __name__ == '__main__':
-    unittest.main() 
+    unittest.main()
