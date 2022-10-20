@@ -16,7 +16,7 @@ class TaskURLTests(TestCase):
                 email='test@ya.ru',
                 password='pass',
                 text='Тестовая запись',
-                )
+            )
         )
         cls.group = Group.objects.create(
             title=('Название тестовой группы'),
