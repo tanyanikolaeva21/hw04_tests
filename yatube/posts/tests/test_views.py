@@ -10,9 +10,9 @@ class PostTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user = User.objects.create_user(username='ya')
+        cls.user = User.objects.create_user(username='Stesha')
         cls.group = Group.objects.create(
-            title='Название группы',
+            title='Заголовок группы',
             slug='test_slug',
             description='Описание',
         )
@@ -22,7 +22,7 @@ class PostTests(TestCase):
         )
 
     def setUp(self):
-        self.user = User.objects.create_user(username='DedMoroz')
+        self.user = User.objects.create_user(username='Stepashka')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
         self.author_client = Client()
@@ -67,8 +67,7 @@ class PostTests(TestCase):
         self.assertEqual(post_text_0, self.post.text)
 
     def test_group_list_page_show_correct_context(self):
-        """Шаблон posts/group_list.html
-        сформирован с правильным контекстом."""
+        """Шаблон posts/group_list.html сформирован с правильным контекстом."""
         slug = self.group.slug
         response = self.authorized_client.get(
             reverse('posts:group_posts', kwargs={'slug': slug})

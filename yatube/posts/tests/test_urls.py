@@ -6,25 +6,26 @@ from posts.models import Group, Post
 User = get_user_model()
 
 
-class TaskURLTests(TestCase):
+class PostURLTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.post = Post.objects.create(
-            author=User.objects.create_user(
-                username='test_name',
-                email='test@ya.ru',
-                password='pass',
-                text='Тестовая запись',
+            author=User.objects.create_user(username='test_user',
+                                            email='test@mail.ru',
+                                            password='test_pass'),
+            text='Тестовая запись для создания нового поста',
             )
-        )
+
         cls.group = Group.objects.create(
-            title=('Название тестовой группы'),
+            title=('Заголовок для тестовой группы'),
             slug='test_slug'
         )
 
     def setUp(self):
+        # Создаем неавторизованный клиент
         self.guest_client = Client()
+        # Создаем авторизованый клиент
         self.user = User.objects.create_user(username='Stesha')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
@@ -45,32 +46,20 @@ class TaskURLTests(TestCase):
         response = self.authorized_client.get('/create/')
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_private_url(self):
-        """без авторизации приватные URL недоступны"""
-        url_names = (
-            '/create/',
-            '/admin/',
-        )
-        for adress in url_names:
-            with self.subTest():
-                response = self.guest_client.get(adress)
-                self.assertEqual(response.status_code, HTTPStatus.FOUND)
-
-    def test_redirect_anonymous_on_login(self):
-        """Страница /create/ перенаправит анонимного пользователя
-        на страницу логина.
-        """
-        response = self.guest_client.get('/create/', follow=True)
+    def test_redirect_guest_on_login(self):
+        """Страница /create/ перенаправит неавторизованного пользователя
+        на страницу логина."""
+        response = self.client.get('/create/', follow=True)
         self.assertRedirects(
-            response, '/auth/signup/'
-        )
+            response, ('/auth/login/?next=/create/'))
 
     def test_urls_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
         templates_url_names = {
-            'index.html': '/',
-            'group_list.html': '/group/test_slug/',
-            'create_post.html': '/create/',
+            'posts/index.html': '/',
+            'posts/group_list.html': '/group/test_slug/',
+            'posts/profile.html': '/profile/test_user/',
+            'posts/create_post.html': '/create/',
         }
         for template, url in templates_url_names.items():
             with self.subTest(url=url):
@@ -78,5 +67,5 @@ class TaskURLTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_page_404(self):
-        response = self.guest_client.get('/unexisting/')
+        response = self.guest_client.get('/unexisting_page/')
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
