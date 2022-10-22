@@ -15,7 +15,7 @@ class PostURLTests(TestCase):
                                             email='test@mail.ru',
                                             password='test_pass'),
             text='Тестовая запись для создания нового поста',
-            )
+        )
 
         cls.group = Group.objects.create(
             title=('Заголовок для тестовой группы'),
