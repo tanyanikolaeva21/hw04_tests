@@ -2,6 +2,7 @@ from http import HTTPStatus
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from posts.models import Group, Post
+from django.urls import reverse
 
 User = get_user_model()
 
@@ -11,9 +12,10 @@ class PostURLTests(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.post = Post.objects.create(
-            author=User.objects.create_user(username='test_user',
-                                            email='test@mail.ru',
-                                            password='test_pass'),
+            author=User.objects.create_user(
+            username='test_user',
+            email='test@mail.ru',
+            password='test_pass'),
             text='Тестовая запись для создания нового поста',
         )
 
@@ -23,22 +25,24 @@ class PostURLTests(TestCase):
         )
 
     def setUp(self):
-        # Создаем неавторизованный клиент
         self.guest_client = Client()
-        # Создаем авторизованый клиент
         self.user = User.objects.create_user(username='Stesha')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
-    def test_home_and_group(self):
-        """страницы группы и главная доступны всем"""
-        url_names = (
-            '/',
-            '/group/test_slug/',
-        )
-        for adress in url_names:
-            with self.subTest():
-                response = self.guest_client.get(adress)
+    def test_home(self):
+        """страница главная доступна всем"""
+        url = reverse('posts:index')
+        response = self.guest_client.get(url)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+
+    def test_group(self):
+        """страница группы доступна всем"""
+        url_names = ('/group/test_slug/', 
+        ) 
+        for adress in url_names: 
+            with self.subTest(): 
+                response = self.guest_client.get(adress) 
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_new_for_authorized(self):

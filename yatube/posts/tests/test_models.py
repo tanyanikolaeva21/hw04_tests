@@ -26,3 +26,7 @@ class PostModelTest(TestCase):
         post = PostModelTest.post
         expected_object_name = post.text[:15]
         self.assertEqual(expected_object_name, str(post))
+
+        group = PostModelTest.group
+        expected_object_name = group.title
+        self.assertEqual(expected_object_name, str(group))
