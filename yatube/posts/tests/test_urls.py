@@ -13,9 +13,9 @@ class PostURLTests(TestCase):
         super().setUpClass()
         cls.post = Post.objects.create(
             author=User.objects.create_user(
-            username='test_user',
-            email='test@mail.ru',
-            password='test_pass'),
+                username='test_user',
+                email='test@mail.ru',
+                password='test_pass'),
             text='Тестовая запись для создания нового поста',
         )
 
@@ -38,11 +38,10 @@ class PostURLTests(TestCase):
 
     def test_group(self):
         """страница группы доступна всем"""
-        url_names = ('/group/test_slug/', 
-        ) 
-        for adress in url_names: 
-            with self.subTest(): 
-                response = self.guest_client.get(adress) 
+        url_names = ('/group/test_slug/',)
+        for adress in url_names:
+            with self.subTest():
+                response = self.guest_client.get(adress)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_new_for_authorized(self):
