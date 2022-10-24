@@ -32,37 +32,36 @@ class PostURLTests(TestCase):
 
     def test_home(self):
         """страница главная доступна всем"""
-        url = reverse('posts:index')
-        response = self.guest_client.get(url)
+        response = self.guest_client.get(reverse('posts:index'))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_group(self):
         """страница группы доступна всем"""
-        url_names = ('/group/test_slug/',)
-        for adress in url_names:
-            with self.subTest():
-                response = self.guest_client.get(adress)
-                self.assertEqual(response.status_code, HTTPStatus.OK)
+        response = self.guest_client.get(reverse('posts:group_posts', kwargs={
+            'slug': self.group.slug}))
+        self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_new_for_authorized(self):
         """Страница /create доступна авторизованному пользователю."""
-        response = self.authorized_client.get('/create/')
+        response = self.authorized_client.get(reverse('posts:post_create'))
         self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_redirect_guest_on_login(self):
         """Страница /create/ перенаправит неавторизованного пользователя
         на страницу логина."""
-        response = self.client.get('/create/', follow=True)
+        response = self.client.get(reverse('posts:post_create'), follow=True)
         self.assertRedirects(
             response, ('/auth/login/?next=/create/'))
 
     def test_urls_uses_correct_template(self):
         """URL-адрес использует соответствующий шаблон."""
         templates_url_names = {
-            'posts/index.html': '/',
-            'posts/group_list.html': '/group/test_slug/',
-            'posts/profile.html': '/profile/test_user/',
-            'posts/create_post.html': '/create/',
+            'posts/index.html': reverse('posts:index'),
+            'posts/group_list.html': reverse('posts:group_posts', kwargs={
+                'slug': self.group.slug}),
+            'posts/profile.html': reverse('posts:profile', kwargs={
+                'username': self.post.author}),
+            'posts/create_post.html': reverse('posts:post_create'),
         }
         for template, url in templates_url_names.items():
             with self.subTest(url=url):
