@@ -3,7 +3,6 @@ from . import views
 
 app_name = 'posts'
 
-#handler404 = 'core.views.page_not_found'
 
 urlpatterns = [
     path('', views.index, name='index'),
